@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Animated } from "react-native";
+import { View, Animated, Text } from "react-native";
 
 class Ball extends Component {
   componentWillMount() {
