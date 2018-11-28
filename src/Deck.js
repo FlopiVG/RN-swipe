@@ -38,7 +38,7 @@ class Deck extends Component {
       }
     });
 
-    this.setState({ panResponder, position, index: 0 });
+    this.state = { panResponder, position, index: 0 };
   }
 
   componentWillReceiveProps(nextProps) {
@@ -53,30 +53,30 @@ class Deck extends Component {
     LayoutAnimation.spring();
   }
 
-  forceSwipe(direction) {
+  forceSwipe = direction => {
     const x = direction === "right" ? SCREEN_WIDTH : -SCREEN_WIDTH;
     Animated.timing(this.state.position, {
       toValue: { x, y: 0 },
       duration: SWIPE_OUT_DURATION
     }).start(() => this.onSwipeComplete(direction));
-  }
+  };
 
-  onSwipeComplete(direction) {
+  onSwipeComplete = direction => {
     const { onSwipeLeft, onSwipeRight, data } = this.props;
     const item = data[this.state.index];
 
     direction === "right" ? onSwipeRight(item) : onSwipeLeft(item);
     this.state.position.setValue({ x: 0, y: 0 });
     this.setState({ index: this.state.index + 1 });
-  }
+  };
 
-  resetPosition() {
+  resetPosition = () => {
     Animated.spring(this.state.position, {
       toValue: { x: 0, y: 0 }
     }).start();
-  }
+  };
 
-  getCardStyle() {
+  getCardStyle = () => {
     const { position } = this.state;
     const rotate = position.x.interpolate({
       inputRange: [-SCREEN_WIDTH * 1.5, 0, SCREEN_WIDTH * 1.5],
@@ -87,9 +87,9 @@ class Deck extends Component {
       ...position.getLayout(),
       transform: [{ rotate }]
     };
-  }
+  };
 
-  renderCards() {
+  renderCards = () => {
     if (this.state.index >= this.props.data.length) {
       return this.props.renderNoMoreCards();
     }
@@ -103,7 +103,7 @@ class Deck extends Component {
             <Animated.View
               key={item.id}
               {...this.state.panResponder.panHandlers}
-              style={[this.getCardStyle(), styles.cardStyle]}
+              style={[this.getCardStyle(), styles.cardStyle, { zIndex: 99 }]}
             >
               {this.props.renderCard(item)}
             </Animated.View>
@@ -113,14 +113,17 @@ class Deck extends Component {
         return (
           <Animated.View
             key={item.id}
-            style={[styles.cardStyle, { top: 10 * (i - this.state.index) }]}
+            style={[
+              styles.cardStyle,
+              { top: 10 * (i - this.state.index), zIndex: 5 }
+            ]}
           >
             {this.props.renderCard(item)}
           </Animated.View>
         );
       })
       .reverse();
-  }
+  };
 
   render() {
     return <View>{this.renderCards()}</View>;
